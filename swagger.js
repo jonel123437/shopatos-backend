@@ -9,9 +9,7 @@ const options = {
       version: "1.0.0",
       description: "Shopatos backend API documentation",
     },
-    servers: [
-      { url: "http://localhost:5000" },
-    ],
+    servers: [{ url: "http://localhost:5000" }],
     components: {
       schemas: {
         Product: {
@@ -24,14 +22,37 @@ const options = {
             image: { type: "string" },
             category: { type: "string" },
           },
-          required: ["id", "name", "price"]
-        }
-      }
-    }
+          required: ["id", "name", "price"],
+        },
+        CartItem: {
+          type: "object",
+          properties: {
+            productId: { type: "string" },
+            name: { type: "string" },
+            price: { type: "string" },
+            quantity: { type: "integer" },
+            image: { type: "string" },
+            category: { type: "string" },
+          },
+          required: ["productId", "name", "price", "quantity"],
+        },
+      },
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+        cookieAuth: {
+          type: "apiKey",
+          in: "cookie",
+          name: "token", // change if your cookie name differs
+        },
+      },
+    },
   },
-  apis: ["./routes/*.js"], // make sure this path points to your products.js
+  apis: ["./routes/*.js"], // path to route files
 };
-
 
 const swaggerSpec = swaggerJSDoc(options);
 
