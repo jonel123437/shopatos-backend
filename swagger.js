@@ -7,7 +7,7 @@ const options = {
     info: {
       title: "Shopatos API",
       version: "1.0.0",
-      description: "Shopatos backend API documentation",
+      description: "Shopatos backend API documentation (User + Admin)",
     },
     servers: [{ url: "http://localhost:5000" }],
     components: {
@@ -36,6 +36,14 @@ const options = {
           },
           required: ["productId", "name", "price", "quantity"],
         },
+        AdminUser: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            email: { type: "string" },
+            role: { type: "string" },
+          },
+        },
       },
       securitySchemes: {
         bearerAuth: {
@@ -46,16 +54,16 @@ const options = {
         cookieAuth: {
           type: "apiKey",
           in: "cookie",
-          name: "token", // change if your cookie name differs
+          name: "adminToken",
         },
       },
     },
   },
-  apis: ["./routes/*.js"], // path to route files
+  apis: ["./routes/*.js"], // must match your route folder
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 
 export const setupSwagger = (app) => {
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 };
