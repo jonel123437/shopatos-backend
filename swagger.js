@@ -1,5 +1,6 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import path from "path";
 
 const options = {
   definition: {
@@ -59,7 +60,8 @@ const options = {
       },
     },
   },
-  apis: ["./routes/*.js"], // must match your route folder
+  // Use path.resolve to ensure it works on any OS
+  apis: [path.resolve("./docs/*.js")], 
 };
 
 const swaggerSpec = swaggerJSDoc(options);
