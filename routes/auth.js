@@ -3,9 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
+import { OAuth2Client } from "google-auth-library";
 
 const router = express.Router();
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// REGISTER
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -25,6 +28,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// LOGIN
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -40,12 +44,48 @@ router.post("/login", async (req, res) => {
     httpOnly: true,
     secure: false,
     sameSite: "Strict",
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    maxAge: 24 * 60 * 60 * 1000,
   });
 
-  res.json({ message: "Login successful", user: { _id: user._id, name: user.name, email: user.email } });
+  res.json({ message: "Login successful", user: { _id: user._id, name: user.name, email: user.email }, token });
 });
 
+// GOOGLE LOGIN
+router.post("/google", async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, sub: googleId, picture } = payload;
+
+    // Find or create user
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ name, email, googleId, avatar: picture, password: "" });
+    }
+
+    const appToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+    res.cookie("token", appToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.json({ message: "Google login successful", user: { _id: user._id, name: user.name, email: user.email }, token: appToken });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: "Google login failed" });
+  }
+});
+
+// GET CURRENT USER
 router.get("/current", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
@@ -56,10 +96,11 @@ router.get("/current", authMiddleware, async (req, res) => {
   }
 });
 
+// LOGOUT
 router.post("/logout", (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
-    secure: false, // true in production
+    secure: false,
     sameSite: "Strict",
     expires: new Date(0),
   });

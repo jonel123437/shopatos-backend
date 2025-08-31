@@ -100,6 +100,52 @@
 
 /**
  * @swagger
+ * /api/auth/google:
+ *   post:
+ *     summary: Login or register a user via Google OAuth
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Google ID token obtained from frontend
+ *     responses:
+ *       200:
+ *         description: Google login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for your app
+ *       401:
+ *         description: Google login failed
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
  * /api/auth/current:
  *   get:
  *     summary: Get current logged-in user info
