@@ -154,3 +154,55 @@
  *       500:
  *         description: Server error
  */
+
+/**
+ * @swagger
+ * /api/cart/checkout:
+ *   post:
+ *     summary: Create an order (checkout)
+ *     description: Moves items from user cart to order and clears the cart.
+ *     tags:
+ *       - Cart
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               paymentIntentId:
+ *                 type: string
+ *                 description: PayMongo payment intent ID
+ *             required:
+ *               - paymentIntentId
+ *     responses:
+ *       200:
+ *         description: Order created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 totalAmount:
+ *                   type: number
+ *                 paymentIntentId:
+ *                   type: string
+ *                 paymentStatus:
+ *                   type: string
+ *       400:
+ *         description: Cart is empty
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Failed to create order
+ */

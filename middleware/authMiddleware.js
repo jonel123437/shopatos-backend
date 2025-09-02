@@ -2,10 +2,12 @@ import jwt from "jsonwebtoken";
 
 export const authMiddleware = (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+    // Check token in cookies or Authorization header
+    const token =
+      req.cookies?.token || req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-      console.warn("AuthMiddleware: No token found in cookies");
+      console.warn("AuthMiddleware: No token found");
       return res.status(401).json({ message: "Unauthorized - No token provided" });
     }
 
@@ -16,6 +18,7 @@ export const authMiddleware = (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized - Invalid token" });
     }
 
+    // Attach user ID to request object
     req.userId = decoded.id;
     next();
   } catch (err) {

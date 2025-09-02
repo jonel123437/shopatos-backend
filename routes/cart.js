@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware.js";
-import { addToCart, getCart, removeFromCart, updateQuantity } from "../controllers/cartController.js";
+import { addToCart, getCart, removeFromCart, updateQuantity, createOrder } from "../controllers/cartController.js";
 import User from "../models/User.js"; // your Mongoose User model
 
 const router = express.Router();
@@ -8,6 +8,8 @@ const router = express.Router();
 router.post("/add", authMiddleware, addToCart);
 router.get("/", authMiddleware, getCart);
 router.post("/remove", authMiddleware, removeFromCart);
+
+// Update quantity by delta
 router.post("/update", authMiddleware, async (req, res) => {
   try {
     const { productId, delta } = req.body;
@@ -32,5 +34,8 @@ router.post("/update", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Failed to update quantity." });
   }
 });
+
+// ✅ Checkout route - create order
+router.post("/checkout", authMiddleware, createOrder);
 
 export default router;

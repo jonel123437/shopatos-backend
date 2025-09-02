@@ -11,6 +11,7 @@ import productsRoute from "./routes/products.js";
 import cartRoutes from "./routes/cart.js";
 import adminRoutes from "./routes/admin.js";
 import paymentRoutes from "./routes/payment.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 import { setupSwagger } from "./swagger.js";
 
@@ -29,6 +30,7 @@ app.use("/api/products", productsRoute);
 app.use("/api/cart", cartRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Test route
 app.get("/", (req, res) => res.send("API is running..."));
