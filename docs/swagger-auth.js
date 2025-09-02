@@ -5,6 +5,8 @@
  *   description: Authentication endpoints
  */
 
+import { addSavedCard } from "../controllers/authController";
+
 /**
  * @swagger
  * /api/auth/register:
@@ -172,4 +174,65 @@
  *         description: Logged out successfully
  *       401:
  *         description: User not authenticated
+ */
+/**
+ * @swagger
+ * /api/auth/cards:
+ *   post:
+ *     summary: Save a new credit card
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               paymentMethodId:
+ *                 type: string
+ *               brand:
+ *                 type: string
+ *               last4:
+ *                 type: string
+ *               expMonth:
+ *                 type: string
+ *               expYear:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Card saved successfully
+ */
+
+/**
+ * @swagger
+ * /api/auth/cards:
+ *   get:
+ *     summary: Get all saved cards for the current user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of saved cards
+ */
+
+/**
+ * @swagger
+ * /api/auth/cards/{id}:
+ *   delete:
+ *     summary: Remove a saved card
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Card removed successfully
  */

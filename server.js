@@ -1,17 +1,18 @@
+import dotenv from "dotenv";
+dotenv.config(); // must come first before all other imports
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.js";   
 import productsRoute from "./routes/products.js";
 import cartRoutes from "./routes/cart.js";
 import adminRoutes from "./routes/admin.js";
+import paymentRoutes from "./routes/payment.js";
 
 import { setupSwagger } from "./swagger.js";
-
-dotenv.config();
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productsRoute);
 app.use("/api/cart", cartRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/payment", paymentRoutes);
 
 // Test route
 app.get("/", (req, res) => res.send("API is running..."));

@@ -5,6 +5,14 @@ import User from "../models/User.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { OAuth2Client } from "google-auth-library";
 
+// ✅ Import your controller functions
+import { 
+  addSavedCard, 
+  removeSavedCard, 
+  getCurrentUser, 
+  getSavedCards 
+} from "../controllers/authController.js";
+
 const router = express.Router();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -47,7 +55,11 @@ router.post("/login", async (req, res) => {
     maxAge: 24 * 60 * 60 * 1000,
   });
 
-  res.json({ message: "Login successful", user: { _id: user._id, name: user.name, email: user.email }, token });
+  res.json({ 
+    message: "Login successful", 
+    user: { _id: user._id, name: user.name, email: user.email }, 
+    token 
+  });
 });
 
 // GOOGLE LOGIN
@@ -78,7 +90,11 @@ router.post("/google", async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.json({ message: "Google login successful", user: { _id: user._id, name: user.name, email: user.email }, token: appToken });
+    res.json({ 
+      message: "Google login successful", 
+      user: { _id: user._id, name: user.name, email: user.email }, 
+      token: appToken 
+    });
   } catch (err) {
     console.error(err);
     res.status(401).json({ message: "Google login failed" });
@@ -86,15 +102,7 @@ router.post("/google", async (req, res) => {
 });
 
 // GET CURRENT USER
-router.get("/current", authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId).select("-password");
-    if (!user) return res.status(401).json({ message: "User not found" });
-    res.json({ user });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.get("/current", authMiddleware, getCurrentUser);
 
 // LOGOUT
 router.post("/logout", (req, res) => {
@@ -106,5 +114,14 @@ router.post("/logout", (req, res) => {
   });
   res.json({ message: "Logged out successfully" });
 });
+
+// Save a card
+router.post("/cards", authMiddleware, addSavedCard);
+
+// Get saved cards
+router.get("/cards", authMiddleware, getSavedCards);
+
+// Remove a saved card
+router.delete("/cards/:id", authMiddleware, removeSavedCard);
 
 export default router;
